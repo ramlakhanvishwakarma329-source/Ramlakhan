@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Questions - {{ section.name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto;">
+
+    <!-- Page Header -->
+    <div style="text-align:center; margin-bottom:30px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo" style="height:100px; margin-bottom:10px;">
+        <h2 style="color:#007bff; font-size:2rem; font-weight:700;">{{ section.name }} - Questions</h2>
+        <div style="color:#555; font-size:0.9rem;">Cogent Safety & Security Pvt Ltd</div>
+    </div>
+
+    <!-- Add Question Form -->
+    <form method="POST" style="background:#f0f4f7; padding:30px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.08); margin-bottom:40px;">
+        <div style="margin-bottom:20px;">
+            <label style="font-weight:bold; color:#333;">Question Text</label>
+            <input type="text" name="text" required placeholder="Enter question text"
+                   style="width:100%; padding:14px; border-radius:12px; border:1px solid #ccc; letter-spacing:0.5px; line-height:1.5;">
+        </div>
+
+        <!-- Options Container -->
+        <div id="optionsContainer">
+            {% for i in range(4) %}
+            <div class="option-field" style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+                <input type="text" name="opt_{{i}}" required placeholder="Option {{i+1}}" 
+                       style="flex:1; padding:12px; border-radius:10px; border:1px solid #ccc; letter-spacing:0.4px;">
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Option Button -->
+        <button type="button" id="addOptionBtn" style="background:#17a2b8; color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-bottom:15px;">
+            <i class="fas fa-plus"></i> Add Option
+        </button>
+
+        <!-- Correct Option Number -->
+        <div style="margin-bottom:15px;">
+            <label style="font-weight:bold; color:#333;">Correct Option (Enter number)</label>
+            <input type="number" name="correct" min="1" required 
+                   style="width:100%; padding:12px; border-radius:10px; border:1px solid #ccc;" placeholder="Enter correct option number">
+        </div>
+
+        <button type="submit" style="width:100%; background:linear-gradient(to right, #28a745, #218838); color:#fff; font-size:1rem; padding:12px; border:none; border-radius:10px;">Add Question</button>
+    </form>
+
+    <!-- Existing Questions Table -->
+    <h3 style="color:#007bff; margin-bottom:15px;">Existing Questions</h3>
+    <div style="overflow-x:auto; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.05);">
+        <table style="width:100%; min-width:1000px; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden;">
+            <thead>
+                <tr style="background:#007bff; color:#fff; text-align:left;">
+                    <th style="padding:14px 18px;">ID</th>
+                    <th style="padding:14px 18px;">Text</th>
+                    <th style="padding:14px 18px;">Options</th>
+                    <th style="padding:14px 18px;">Correct</th>
+                    <th style="padding:14px 18px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in questions %}
+                <tr class="question-row">
+                    <td style="padding:14px 18px;">{{ q.id }}</td>
+                    <td style="padding:14px 18px; letter-spacing:0.5px; line-height:1.5;">{{ q.text }}</td>
+                    <td style="padding:14px 18px;">
+                        <ol style="padding-left: 18px; margin:0;">
+                            {% for opt in q.options %}
+                            <li style="margin-bottom:4px;">{{ opt }}</li>
+                            {% endfor %}
+                        </ol>
+                    </td>
+                    <td style="padding:14px 18px;">{{ q.correct_option + 1 }}</td>
+                    <td style="padding:14px 18px;">
+                        <a href="{{ url_for('edit_question', question_id=q.id) }}" style="color:#17a2b8; margin-right:8px;">Edit</a>
+                        <a href="{{ url_for('delete_question', question_id=q.id) }}" style="color:#dc3545;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- JS for dynamic options -->
+<script>
+    let optionCount = 4;
+    const container = document.getElementById('optionsContainer');
+
+    function updateOptionFields() {
+        const optionFields = container.querySelectorAll('.option-field input');
+        optionFields.forEach((input, index) => {
+            input.placeholder = `Option ${index + 1}`;
+            input.name = `opt_${index}`;
+        });
+    }
+
+    document.getElementById('addOptionBtn').addEventListener('click', function() {
+        optionCount++;
+        const div = document.createElement('div');
+        div.className = 'option-field';
+        div.style.marginBottom = '15px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+
+        div.innerHTML = `
+            <input type="text" required style="flex:1; padding:12px; border-radius:10px; border:1px solid #ccc;">
+            <button type="button" class="removeOptionBtn" style="background:#dc3545; color:#fff; border:none; border-radius:6px; padding:0 10px; cursor:pointer;">&times;</button>
+        `;
+        container.appendChild(div);
+
+        div.querySelector('.removeOptionBtn').addEventListener('click', function() {
+            div.remove();
+            updateOptionFields();
+        });
+
+        updateOptionFields();
+    });
+</script>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    table tbody tr:nth-child(even) { background: #f8faff; }
+    table tbody tr:nth-child(odd) { background: #e6f0ff; }
+    table tbody tr:hover {
+        background: #cce6ff !important;
+        transform: scale(1.005);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    button:hover { opacity: 0.9; }
+</style>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Create User{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto;">
+
+    <!-- Logo inside the form -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo" 
+             style="height: 70px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div style="margin-top: 10px; color: #555; font-weight: 600;">Cogent Safety & Security Pvt Ltd</div>
+    </div>
+
+    <!-- Form Heading -->
+    <h2 style="text-align: center; color: #007bff; margin-bottom: 25px; font-weight: 700; font-size: 1.8rem; text-shadow: 1px 1px #aaa;">
+        Create User
+    </h2>
+
+    <!-- Form -->
+    <form method="POST" style="background: #f0f4f7; padding: 30px; border-radius: 15px; 
+                                box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: transform 0.3s;">
+
+        {% for field, placeholder in [
+            ('first_name','Enter first name'),
+            ('middle_name','Enter middle name (optional)'),
+            ('last_name','Enter last name'),
+            ('email','Enter email address'),
+            ('mobile','Enter mobile number'),
+            ('dob',''),
+            ('designation','Enter designation')
+        ] %}
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: 600; color: #333; display:block; margin-bottom:5px;">
+                {{ field.replace('_',' ').title() }}
+            </label>
+            <input type="{{ 'date' if field=='dob' else 'text' if field!='email' else 'email' }}" 
+                   name="{{ field }}" 
+                   placeholder="{{ placeholder }}" 
+                   {% if field in ['first_name','last_name','email','assigned_section_id'] %} required {% endif %}
+                   style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; transition: border 0.3s;">
+        </div>
+        {% endfor %}
+
+        <!-- Assign Section -->
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: 600; color: #333; display:block; margin-bottom:5px;">Assign Section</label>
+            <select name="assigned_section_id" required style="width: 100%; padding: 12px; border-radius: 10px; border:1px solid #ccc;">
+                {% for sec in sections %}
+                    <option value="{{ sec.id }}">{{ sec.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" 
+                style="width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 600; color: #fff; 
+                       border:none; border-radius: 12px; cursor:pointer; 
+                       background: linear-gradient(to right, #28a745, #218838); 
+                       box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s;">
+            Create User
+        </button>
+    </form>
+</div>
+
+<!-- Styles for hover effects -->
+<style>
+    input:focus, select:focus {
+        border: 2px solid #007bff;
+        outline: none;
+    }
+    button:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    form:hover {
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ section.name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto;">
+
+    <!-- Page Header -->
+    <div style="text-align:center; margin-bottom:30px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo" style="height:100px; margin-bottom:10px;">
+        <h2 style="color:#007bff; font-size:2rem; font-weight:700;">{{ section.name }}</h2>
+        <div style="color:#555; font-size:0.9rem;">Cogent Safety & Security Pvt Ltd</div>
+    </div>
+
+    <!-- Section Questions Form -->
+    <form method="POST" action="{{ url_for('submit_section', section_id=section.id) }}" 
+          style="background:#f0f4f7; padding:30px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.08);">
+        
+        {% for q in questions %}
+        <div style="margin-bottom:25px; padding:15px 20px; background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+            <strong style="display:block; margin-bottom:15px; color:#333; font-size:1.1rem; line-height:1.4;">
+                {{ loop.index }}. {{ q.text }}
+            </strong>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                {% for opt in q.options %}
+                <label style="cursor:pointer; background:#e9f4ff; padding:12px 15px; border-radius:8px; transition: all 0.3s; display:flex; align-items:center; gap:10px;">
+                    <input type="radio" name="q_{{ q.id }}" value="{{ loop.index0 }}" style="transform: scale(1.2);">
+                    <span style="color:#333; font-size:1rem;">{{ opt }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" style="width:100%; margin-top:20px; 
+                background: linear-gradient(to right, #007bff, #0056b3); 
+                font-size:1.1rem; color:#fff; padding:12px; border:none; border-radius:10px;
+                box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:all 0.3s; cursor:pointer;">
+            Submit
+        </button>
+    </form>
+</div>
+
+<style>
+    label:hover {
+        background: #cce6ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    button:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        opacity:0.95;
+    }
+</style>
+{% endblock %}

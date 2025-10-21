@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Edit Question{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto;">
+
+    <!-- Page Header -->
+    <div style="text-align:center; margin-bottom:30px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo" style="height:100px; margin-bottom:10px;">
+        <h2 style="color:#007bff; font-size:2rem; font-weight:700;">Edit Question</h2>
+        <div style="color:#555; font-size:0.9rem;">Cogent Safety & Security Pvt Ltd</div>
+    </div>
+
+    <!-- Edit Question Form -->
+    <form method="POST" style="background:#f0f4f7; padding:30px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.08);">
+        <div style="margin-bottom:20px;">
+            <label style="font-weight:bold; color:#333;">Question Text</label>
+            <input type="text" name="text" value="{{ question.text }}" required placeholder="Enter question text"
+                   style="width:100%; padding:14px; border-radius:12px; border:1px solid #ccc; letter-spacing:0.5px; line-height:1.5;">
+        </div>
+
+        <!-- Options Container -->
+        <div id="optionsContainer">
+            {% for i in range(4) %}
+            <div class="option-field" style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+                <input type="text" name="opt_{{i}}" value="{{ options[i] }}" required placeholder="Option {{i+1}}" 
+                       style="flex:1; padding:12px; border-radius:10px; border:1px solid #ccc; letter-spacing:0.4px;">
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Correct Option Number -->
+        <div style="margin-bottom:15px;">
+            <label style="font-weight:bold; color:#333;">Correct Option (Enter number)</label>
+            <input type="number" name="correct" min="1" required 
+                   value="{{ question.correct_option + 1 }}"
+                   style="width:100%; padding:12px; border-radius:10px; border:1px solid #ccc;" placeholder="Enter correct option number">
+        </div>
+
+        <button type="submit" style="width:100%; background:linear-gradient(to right, #ffc107, #e0a800); color:#fff; font-size:1rem; padding:12px; border:none; border-radius:10px;">Update Question</button>
+    </form>
+
+</div>
+
+<!-- Optional JS for dynamic options (if needed for future extra options) -->
+<script>
+    const container = document.getElementById('optionsContainer');
+    function updateOptionFields() {
+        const optionFields = container.querySelectorAll('.option-field input');
+        optionFields.forEach((input, index) => {
+            input.placeholder = `Option ${index + 1}`;
+            input.name = `opt_${index}`;
+        });
+    }
+</script>
+
+<style>
+    input:focus {
+        border: 2px solid #007bff;
+        outline: none;
+    }
+</style>
+{% endblock %}

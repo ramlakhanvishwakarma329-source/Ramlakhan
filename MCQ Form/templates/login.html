@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 0 auto; margin-top: 60px; text-align: center;">
+
+    <!-- Form Container -->
+    <form method="POST" style="background: linear-gradient(145deg, #e3f2fd, #ffffff);
+                               padding: 35px; border-radius: 20px;
+                               box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+                               transition: transform 0.3s, box-shadow 0.3s;">
+
+        <!-- Logo Inside Form -->
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo"
+             style="height: 80px; margin-bottom: 20px; border-radius: 12px; 
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.25); transition: transform 0.3s;">
+
+        <h2 style="color: #007bff; margin-bottom: 25px; font-family: 'Playfair Display', serif;
+                   text-shadow: 1px 1px 2px rgba(0,0,0,0.2); font-size: 2rem;">
+            Login
+        </h2>
+
+        <div style="margin-bottom: 20px; text-align: left;">
+            <label style="font-weight: 600; color: #333;">Username</label>
+            <input type="text" name="username" required placeholder="Enter your username"
+                   style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ccc;
+                          background: linear-gradient(135deg, #f9f9f9, #e9f4ff);
+                          transition: 0.3s; font-size: 1rem;">
+        </div>
+
+        <div style="margin-bottom: 20px; text-align: left;">
+            <label style="font-weight: 600; color: #333;">Password</label>
+            <input type="password" name="password" required placeholder="Enter your password"
+                   style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ccc;
+                          background: linear-gradient(135deg, #f9f9f9, #e9f4ff);
+                          transition: 0.3s; font-size: 1rem;">
+        </div>
+
+        <button type="submit"
+                style="width: 100%; margin-top: 20px; background: linear-gradient(to right, #007bff, #0056b3);
+                       font-size: 1.15rem; color: #fff; padding: 14px; border: none; border-radius: 12px;
+                       cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: all 0.3s;">
+            Login
+        </button>
+
+        <!-- Company Name Below Button -->
+        <div style="margin-top: 18px; color: #6c757d; font-weight: 500; font-size: 0.95rem;
+                    text-shadow: 0 1px 1px rgba(0,0,0,0.05);">
+            Cogent Safety & Security Pvt Ltd
+        </div>
+    </form>
+</div>
+
+<style>
+    input:focus {
+        border: 2px solid #007bff;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0,123,255,0.4);
+    }
+    button:hover {
+        transform: scale(1.05) translateY(-2px);
+        background: linear-gradient(to right, #0056b3, #007bff);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    form:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+    img:hover {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

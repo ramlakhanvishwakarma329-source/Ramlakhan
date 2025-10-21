@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 50px auto; text-align: center; font-family: 'Poppins', sans-serif; position: relative;">
+
+    <!-- Company Header -->
+    <div style="margin-bottom: 40px;">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo"
+             style="height: 150px; margin-bottom: 10px;">
+        <h2 style="font-size: 2.2rem; font-weight: 700; color: #007bff; letter-spacing: 1px;">
+            Cogent Safety & Security Pvt Ltd
+        </h2>
+    </div>
+
+    <!-- Result Header -->
+    {% set accuracy = (correct / total * 100) if total > 0 else 0 %}
+    {% set passed = accuracy >= 70 %}
+
+    {% if passed %}
+        <div id="congrats" style="margin-bottom: 30px; animation: fadeIn 1.5s ease;">
+            <i class="fas fa-trophy" style="font-size: 3rem; color: gold; margin-bottom: 10px;"></i>
+            <h2 style="color: #28a745; font-size: 2rem;">🎉 Congratulations, {{ user_name }}! 🎉</h2>
+            <p style="color: #444; font-size: 1.1rem;">You passed with <strong>{{ accuracy|round(0) }}%</strong> accuracy!</p>
+        </div>
+    {% else %}
+        <div style="margin-bottom: 30px; animation: fadeIn 1.5s ease;">
+            <i class="fas fa-hourglass-half" style="font-size: 3rem; color: #dc3545; margin-bottom: 10px;"></i>
+            <h2 style="color: #dc3545; font-size: 2rem;">Keep Trying, {{ user_name }}!</h2>
+            <p style="color: #555;">Your accuracy is <strong>{{ accuracy|round(0) }}%</strong>. Try again to improve!</p>
+        </div>
+    {% endif %}
+
+    <!-- KPI Cards -->
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; margin-bottom: 50px;">
+        <div class="result-card" style="--color:#007bff;">
+            <i class="fas fa-list-ol icon"></i>
+            <h3>Total Questions</h3>
+            <p>{{ total }}</p>
+        </div>
+        <div class="result-card" style="--color:#28a745;">
+            <i class="fas fa-check-circle icon"></i>
+            <h3>Correct</h3>
+            <p>{{ correct }}</p>
+        </div>
+        <div class="result-card" style="--color:#dc3545;">
+            <i class="fas fa-times-circle icon"></i>
+            <h3>Wrong</h3>
+            <p>{{ wrong }}</p>
+        </div>
+        <div class="result-card" style="--color:#ff9800;">
+            <i class="fas fa-percentage icon"></i>
+            <h3>Accuracy</h3>
+            <p>{{ accuracy|round(0) }}%</p>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div style="margin: 0 auto 50px auto; max-width: 600px;">
+        <div style="background: #e9ecef; border-radius: 30px; overflow: hidden; height: 40px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);">
+            <div class="progress-bar" 
+                 style="width: 0%; height: 100%; color: #fff; text-align: center; line-height: 40px; font-weight: 600; font-size: 1.1rem; border-radius: 30px;">
+                0%
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 40px;">
+        {% if passed %}
+        <a href="{{ url_for('download_certificate', submission_id=submission.id) }}">
+            <button class="glow-button">
+                <i class="fas fa-download"></i> Download Certificate
+            </button>
+        </a>
+        {% else %}
+        <a href="{{ url_for('index') }}">
+            <button class="retry-button">
+                <i class="fas fa-redo-alt"></i> Retake Test
+            </button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<!-- Confetti Script -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    // Animate progress bar
+    const accuracy = {{ accuracy|round(0) }};
+    const progressBar = document.querySelector('.progress-bar');
+    let width = 0;
+    const interval = setInterval(() => {
+        if (width >= accuracy) clearInterval(interval);
+        else {
+            width++;
+            progressBar.style.width = width + "%";
+            progressBar.textContent = width + "%";
+        }
+    }, 20);
+
+    // Confetti animation when passed
+    {% if passed %}
+    setTimeout(() => {
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 80,
+                origin: { x: 0 },
+                colors: ['#28a745', '#007bff', '#ffc107']
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 80,
+                origin: { x: 1 },
+                colors: ['#28a745', '#007bff', '#ffc107']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        })();
+    }, 500);
+    {% endif %}
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+        flex: 1 1 180px;
+        background: var(--color);
+        color: #fff;
+        border-radius: 15px;
+        padding: 25px 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        animation: fadeIn 1.2s ease;
+    }
+    .result-card:hover {
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .result-card .icon {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+    .result-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+    .result-card p {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .progress-bar {
+        background: linear-gradient(90deg, #28a745, #17a2b8, #007bff);
+    }
+
+    /* Glowing Certificate Button */
+    .glow-button {
+        padding: 14px 35px;
+        background: linear-gradient(to right, #ffc107, #ff8c00);
+        color: #fff;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        animation: glowPulse 2s infinite;
+        transition: all 0.3s;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes glowPulse {
+        0% { box-shadow: 0 0 10px #ffc107, 0 0 20px #ff8c00; }
+        50% { box-shadow: 0 0 25px #ffc107, 0 0 40px #ff8c00; }
+        100% { box-shadow: 0 0 10px #ffc107, 0 0 20px #ff8c00; }
+    }
+
+    .glow-button:hover {
+        transform: scale(1.07);
+    }
+
+    /* Glowing Red Retry Button */
+    .retry-button {
+        padding: 14px 35px;
+        background: linear-gradient(to right, #ff4d4d, #cc0000);
+        color: #fff;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        animation: redPulse 2s infinite;
+        transition: all 0.3s;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes redPulse {
+        0% { box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff0000; }
+        50% { box-shadow: 0 0 25px #ff4d4d, 0 0 40px #ff0000; }
+        100% { box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff0000; }
+    }
+
+    .retry-button:hover {
+        transform: scale(1.07);
+    }
+</style>
+{% endblock %}

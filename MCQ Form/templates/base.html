@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}My App{% endblock %}</title>
+<style>
+    /* ===== Global ===== */
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f4f4; min-height:100vh; }
+    a { text-decoration:none; }
+
+    /* ===== Header ===== */
+    header {
+        width: 100%;
+        background: linear-gradient(90deg,#007bff,#0056b3);
+        color:#fff;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:15px 30px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.1);
+        flex-wrap:wrap;
+        position:sticky;
+        top:0;
+        z-index:100;
+    }
+    .logo-name { display:flex; align-items:center; }
+    .logo-name img {
+        height:60px;
+        margin-right:15px;
+        border-radius:6px;
+        border:2px solid #fff;
+        box-shadow:0 3px 8px rgba(0,0,0,0.2);
+    }
+    .logo-name span { font-size:1.8rem; font-weight:700; }
+    .top-nav { display:flex; gap:12px; flex-wrap:wrap; }
+    .top-nav a { color:#fff; padding:8px 18px; border-radius:6px; background: rgba(255,255,255,0.15); font-weight:500; transition:0.3s; white-space:nowrap; }
+    .top-nav a:hover { background: rgba(255,255,255,0.3); }
+
+    /* ===== Flash Messages ===== */
+    .flash {
+        padding:12px 15px;
+        background:#fff3cd;
+        border-left:5px solid #ffc107;
+        margin:15px 0;
+        border-radius:6px;
+        font-weight:500;
+        box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* ===== Page Content Container ===== */
+    main {
+        margin-top:30px;
+        padding:20px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width:768px) {
+        header { flex-direction:column; text-align:center; gap:10px; }
+        .logo-name span { font-size:1.5rem; }
+        .logo-name img { height:50px; }
+        .top-nav { justify-content:center; }
+    }
+    @media (max-width:480px) {
+        .logo-name span { font-size:1.3rem; }
+        .logo-name img { height:45px; }
+        main { padding:15px; }
+    }
+</style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-name">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo">
+            <span>Cogent Safety & Security Pvt Ltd</span>
+        </div>
+        <div class="top-nav">
+            {% if session.admin %}
+                <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% elif session.responder_username %}
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="flash">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

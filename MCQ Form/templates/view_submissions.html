@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Submissions - {{ section.name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 50px auto; font-family: 'Poppins', sans-serif;">
+
+    <!-- Company Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center;">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo" style="height: 80px; margin-right: 15px;">
+            <h2 style="color: #007bff; font-size: 2rem; letter-spacing: 1px;">Cogent Safety & Security Pvt Ltd</h2>
+        </div>
+        <a href="{{ url_for('download_file', section_id=section.id) }}">
+            <button style="padding: 10px 20px; background: linear-gradient(to right, #28a745, #20c997); color: #fff; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-file-excel"></i> Download Excel
+            </button>
+        </a>
+    </div>
+
+    <h3 style="text-align: center; color: #007bff; margin-bottom: 20px;">Submissions for {{ section.name }}</h3>
+
+    <div style="overflow-x:auto; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+        <table id="submissionsTable" class="display" style="width:100%; border-collapse: collapse;">
+            <thead style="background: linear-gradient(90deg, #007bff, #17a2b8); color: #fff;">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Total Correct</th>
+                    <th>Total Wrong</th>
+                    <th>Total Questions</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>Certificate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in subs %}
+                {% set passed = (s.total_correct == s.total_questions) %}
+                <tr style="background: {{ loop.cycle('#f8faff', '#f1f5fb') }};">
+                    <td style="text-align: center;">{{ s.id }}</td>
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.email }}</td>
+                    <td style="text-align: center; color: #28a745;">{{ s.total_correct }}</td>
+                    <td style="text-align: center; color: #dc3545;">{{ s.total_wrong }}</td>
+                    <td style="text-align: center;">{{ s.total_questions }}</td>
+                    <td style="text-align: center;">{{ s.timestamp }}</td>
+                    <td style="text-align: center;">
+                        {% if passed %}
+                            <span style="padding: 5px 12px; background: #28a745; color: #fff; border-radius: 20px; font-weight: 600;">Pass</span>
+                        {% else %}
+                            <span style="padding: 5px 12px; background: #dc3545; color: #fff; border-radius: 20px; font-weight: 600;">Fail</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% if passed %}
+                        <a href="{{ url_for('download_certificate_pdf', submission_id=s.id) }}" style="text-decoration: none;">
+                            <button style="padding: 6px 15px; background: linear-gradient(to right, #ffc107, #ff8c00); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-download"></i> Certificate
+                            </button>
+                        </a>
+                        {% else %}
+                            <span style="color: #888; font-size: 0.9rem;">N/A</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#submissionsTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5,10,25,50,100],
+            "order": [[0, "desc"]],
+            "columnDefs": [
+                { "orderable": false, "targets": 8 } // Certificate column not sortable
+            ]
+        });
+    });
+</script>
+
+<style>
+    table.dataTable thead th {
+        text-align: center;
+    }
+    table.dataTable tbody tr:hover {
+        background: #e6f7ff !important;
+        transform: scale(1.02);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
